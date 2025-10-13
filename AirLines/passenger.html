@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Passenger Information - Narvasa AirLines</title>
+</head>
+<body>
+    <header>
+        <h1>Passenger Information</h1>
+    </header>
+    <div class="progress-bar">
+        <div class="progress-step completed"><span>1</span><div class="progress-label">Select Flight</div></div>
+        <div class="progress-step active"><span>2</span><div class="progress-label">Passenger Info</div></div>
+        <div class="progress-step"><span>3</span><div class="progress-label">Booking Summary</div></div>
+        <div class="progress-step"><span>4</span><div class="progress-label">Confirmation</div></div>
+    </div>
+    <section class="passenger-section">
+        <form id="passenger-form">
+            <div id="passengers-container"></div>
+            <button type="submit">Submit</button>
+        </form>
+    </section>
+    <script>
+        const bookingData = JSON.parse(localStorage.getItem('bookingData'));
+        const passengersContainer = document.getElementById('passengers-container');
+        const numPassengers = parseInt(bookingData.passengers);
+
+        for (let i = 1; i <= numPassengers; i++) {
+            passengersContainer.innerHTML += `
+                <div class="passenger-card">
+                    <h3>Passenger ${i}</h3>
+                    <div class="form-group">
+                        <label for="name-${i}">Full Name:</label>
+                        <input type="text" id="name-${i}" name="name-${i}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email-${i}">Email:</label>
+                        <input type="email" id="email-${i}" name="email-${i}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone-${i}">Phone:</label>
+                        <input type="tel" id="phone-${i}" name="phone-${i}" required>
+                    </div>
+                </div>
+            `;
+        }
+
+        document.getElementById('passenger-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const passengers = [];
+            for (let i = 1; i <= numPassengers; i++) {
+                passengers.push({
+                    name: formData.get(`name-${i}`),
+                    email: formData.get(`email-${i}`),
+                    phone: formData.get(`phone-${i}`)
+                });
+            }
+            localStorage.setItem('passengers', JSON.stringify(passengers));
+            window.location.href = 'summary.html';
+        });
+    </script>
+</body>
+</html>

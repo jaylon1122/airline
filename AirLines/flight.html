@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Available Flights - Narvasa AirLines</title>
+</head>
+<body>
+    <header>
+        <h1>Available Flights</h1>
+    </header>
+    <section class="flight-section">
+        <div id="flights-container"></div>
+    </section>
+    <script>
+        const bookingData = JSON.parse(localStorage.getItem('bookingData'));
+        const flightsContainer = document.getElementById('flights-container');
+
+        // Hardcoded flight schedules
+        const roundTripFlights = {
+            depart: [
+                { flightNo: '5J 560', time: '08:00', date: bookingData.departDate, destination: bookingData.to, price: 5000, seats: 50, hours: 2, fareType: 'Promo Fare', terminal: 'Terminal 1' },
+                { flightNo: '5J 561', time: '12:00', date: bookingData.departDate, destination: bookingData.to, price: 5500, seats: 45, hours: 2, fareType: '', terminal: 'Terminal 2' },
+                { flightNo: '5J 562', time: '16:00', date: bookingData.departDate, destination: bookingData.to, price: 6000, seats: 40, hours: 2, fareType: 'Promo Fare', terminal: 'Terminal 1' }
+            ],
+            return: [
+                { flightNo: '5J 563', time: '09:00', date: bookingData.returnDate, destination: bookingData.from, price: 5000, seats: 50, hours: 2, fareType: 'Promo Fare', terminal: 'Terminal 1' },
+                { flightNo: '5J 564', time: '13:00', date: bookingData.returnDate, destination: bookingData.from, price: 5500, seats: 45, hours: 2, fareType: '', terminal: 'Terminal 2' },
+                { flightNo: '5J 565', time: '17:00', date: bookingData.returnDate, destination: bookingData.from, price: 6000, seats: 40, hours: 2, fareType: 'Promo Fare', terminal: 'Terminal 1' }
+            ]
+        };
+
+        const oneWayFlights = [
+            { flightNo: '5J 566', time: '10:00', date: bookingData.departDate, destination: bookingData.to, price: 4500, seats: 55, hours: 2, fareType: 'Promo Fare', terminal: 'Terminal 1' },
+            { flightNo: '5J 567', time: '14:00', date: bookingData.departDate, destination: bookingData.to, price: 5000, seats: 50, hours: 2, fareType: '', terminal: 'Terminal 2' },
+            { flightNo: '5J 568', time: '18:00', date: bookingData.departDate, destination: bookingData.to, price: 5500, seats: 45, hours: 2, fareType: 'Promo Fare', terminal: 'Terminal 1' }
+        ];
+
+        function displayFlights(flights, title) {
+            let html = `<h2>${title}</h2><div class="flights-list">`;
+            flights.forEach(flight => {
+                html += `
+                    <div class="flight-card">
+                        <p>Flight No: ${flight.flightNo}</p>
+                        <p>Time: ${flight.time}</p>
+                        <p>Date: ${flight.date}</p>
+                        <p>Destination: ${flight.destination}</p>
+                        <p>Price: ₱${flight.price}</p>
+                        <p>Seats Available: ${flight.seats}</p>
+                        <p>Hours: ${flight.hours}</p>
+                        <p>Fare Type: ${flight.fareType || 'Standard'}</p>
+                        <button class="select-btn" data-flight='${JSON.stringify(flight)}'>Select</button>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            return html;
+        }
+
+        if (bookingData.flightType === 'round-trip') {
+            flightsContainer.innerHTML = displayFlights(roundTripFlights.depart, 'Depart Flights') + displayFlights(roundTripFlights.return, 'Return Flights');
+        } else {
+            flightsContainer.innerHTML = displayFlights(oneWayFlights, 'One Way Flights');
+        }
+
+        let selectedDepart = null;
+        let selectedReturn = null;
+
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('select-btn')) {
+                const selectedFlight = JSON.parse(e.target.dataset.flight);
+                if (bookingData.flightType === 'round-trip') {
+                    if (selectedFlight.date === bookingData.departDate) {
+                        selectedDepart = selectedFlight;
+                        alert('Depart flight selected. Now select return flight.');
+                    } else if (selectedFlight.date === bookingData.returnDate) {
+                        selectedReturn = selectedFlight;
+                        if (selectedDepart) {
+                            localStorage.setItem('selectedFlights', JSON.stringify({ depart: selectedDepart, return: selectedReturn }));
+                            window.location.href = 'passenger.html';
+                        } else {
+                            alert('Please select depart flight first.');
+                        }
+                    }
+                } else {
+                    localStorage.setItem('selectedFlights', JSON.stringify({ depart: selectedFlight }));
+                    window.location.href = 'passenger.html';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

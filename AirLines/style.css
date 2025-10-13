@@ -1,0 +1,257 @@
+body {
+    font-family: 'Baloo 2', 'Quicksand', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f6fa; 
+}
+
+header {
+    background-color: #b39ddb; 
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(120, 120, 130, 0.08);
+}
+
+header h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+
+.home-layout {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    max-width: 900px;
+    margin: 40px auto;
+}
+
+.home-section {
+    flex: 1;
+    background: #ede7f6; 
+    border-radius: 12px;
+    padding: 32px 24px;
+    box-shadow: 0 2px 8px rgba(120,120,130,0.07);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.progress-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.progress-bar::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 8%;
+    width: 84%;
+    height: 6px;
+    background: #e0e0e0;
+    z-index: 0;
+    transform: translateY(-50%);
+    border-radius: 3px;
+}
+
+.progress-step {
+    position: relative;
+    background: #ccc;
+    color: white;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    z-index: 1;
+    transition: background 0.3s;
+    font-size: 1.1rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+}
+
+.progress-step.active,
+.progress-step.completed {
+    background: #b39ddb;
+}
+
+.progress-step.completed {
+    background: #4bb543;
+}
+
+.progress-label {
+    position: absolute;
+    top: 54px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.85rem;
+    color: #0a4f9c;
+    text-align: center;
+    width: 80px;
+}
+
+#book-flight-btn {
+    font-size: 2rem;
+    padding: 20px 40px;
+    border-radius: 12px;
+    background-color: #b39ddb; 
+    color: #fff;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 32px;
+    transition: background 0.2s;
+    box-shadow: 0 4px 16px rgba(120,120,130,0.12);
+    align-self: flex-start;
+}
+
+#book-flight-btn:hover {
+    background-color: #f48fb1; 
+    color: #7c6e7f; 
+}
+
+.side-header {
+    text-align: left;
+    margin-top: 40px;
+    width: 100%;
+    max-width: 730px;
+    padding: 24px 32px;
+    background: linear-gradient(90deg, #ede7f6 60%, #fff0f6 100%);
+    border: 2px solid #b39ddb; 
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(179, 157, 219, 0.12);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.side-header h1 {
+    font-size: 3.2rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    margin-top: 0;
+    color: #b39ddb;
+    text-shadow: 0 2px 8px rgba(179, 157, 219, 0.15);
+    line-height: 1.1;
+    word-break: break-word;
+}
+
+.side-header p {
+    color: #7c6e7f;
+    font-size: 1.3rem;
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
+section {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px 40px;
+    background-color: #f9f9f6; 
+    border-radius: 12px;
+    box-shadow: 0 0 16px rgba(120,120,130,0.12);
+    border: 1px solid #e0e0e0; 
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #7c6e7f; 
+}
+
+input, select, button {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #cfcfcf; 
+    border-radius: 6px;
+    background-color: #f8f6fa; 
+    color: #7c6e7f; 
+}
+
+button {
+    background-color: #b39ddb; 
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.2s;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color: #f48fb1;
+    color: #7c6e7f;
+}
+
+.flights-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.flight-card {
+    border: 1px solid #cfcfcf;
+    padding: 15px;
+    border-radius: 10px;
+    width: calc(33% - 20px);
+    box-sizing: border-box;
+    background-color: #ede7f6; 
+    box-shadow: 0 2px 8px rgba(120,120,130,0.07);
+}
+
+.flight-card p {
+    margin: 5px 0;
+    color: #7c6e7f; 
+}
+
+.select-btn {
+    width: auto;
+    margin-top: 10px;
+    background-color: #f48fb1; 
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.select-btn:hover {
+    background-color: #b39ddb; 
+    color: #fff;
+}
+
+.passenger-card {
+    border: 1px solid #cfcfcf; 
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    background-color: #f9f9f6; 
+    box-shadow: 0 2px 8px rgba(120,120,130,0.07);
+}
+
+.flight-info, .passenger-info {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #e0e0e0;  
+    border-radius: 6px;
+    background-color: #f8f6fa; 
+    color: #7c6e7f; 
+}

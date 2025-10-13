@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Booking Details - Narvasa AirLines</title>
+</head>
+<body>
+    <header>
+        <h1>Booking Details</h1>
+    </header>
+    <div class="progress-bar">
+        <div class="progress-step active"><span>1</span><div class="progress-label">Select Flight</div></div>
+        <div class="progress-step"><span>2</span><div class="progress-label">Passenger Info</div></div>
+        <div class="progress-step"><span>3</span><div class="progress-label">Booking Summary</div></div>
+        <div class="progress-step"><span>4</span><div class="progress-label">Confirmation</div></div>
+    </div>
+    <section class="booking-section">
+        <form id="booking-form">
+            <div class="form-group">
+                <label for="from">From:</label>
+                <input type="text" id="from" name="from" required>
+            </div>
+            <div class="form-group">
+                <label for="to">To:</label>
+                <input type="text" id="to" name="to" required>
+            </div>
+            <div class="form-group">
+                <label>Flight Type:</label>
+                <input type="radio" id="round-trip" name="flight-type" value="round-trip" checked>
+                <label for="round-trip">Round Trip</label>
+                <input type="radio" id="one-way" name="flight-type" value="one-way">
+                <label for="one-way">One Way</label>
+            </div>
+            <div class="form-group" id="depart-date-group">
+                <label for="depart-date">Depart Date:</label>
+                <input type="date" id="depart-date" name="depart-date" required>
+            </div>
+            <div class="form-group" id="return-date-group">
+                <label for="return-date">Return Date:</label>
+                <input type="date" id="return-date" name="return-date" required>
+            </div>
+            <div class="form-group">
+                <label for="passengers">Number of Passengers:</label>
+                <select id="passengers" name="passengers" required>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
+            </div>
+            <button type="submit">Search Flight</button>
+        </form>
+    </section>
+    <script>
+        const flightTypeRadios = document.querySelectorAll('input[name="flight-type"]');
+        const returnDateGroup = document.getElementById('return-date-group');
+
+        flightTypeRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.value === 'one-way') {
+                    returnDateGroup.style.display = 'none';
+                    document.getElementById('return-date').required = false;
+                } else {
+                    returnDateGroup.style.display = 'block';
+                    document.getElementById('return-date').required = true;
+                }
+            });
+        });
+
+        document.getElementById('booking-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const bookingData = {
+                from: formData.get('from'),
+                to: formData.get('to'),
+                flightType: formData.get('flight-type'),
+                departDate: formData.get('depart-date'),
+                returnDate: formData.get('return-date'),
+                passengers: formData.get('passengers')
+            };
+            localStorage.setItem('bookingData', JSON.stringify(bookingData));
+            window.location.href = 'flight.html';
+        });
+    </script>
+</body>
+</html>

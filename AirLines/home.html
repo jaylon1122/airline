@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=Baloo+2:wght@400;700&display=swap" rel="stylesheet">
+    <title>Narvasa AirLines</title>
+</head>
+<body>
+    <div class="home-layout">
+        <section class="home-section">
+            <header class="side-header">
+                <h1>Welcome to AeroSkyLine Air</h1>
+                <p>Your trusted partner for safe and comfortable flights.</p>
+            </header>  
+            <button id="book-flight-btn">Book A Flight</button>
+            
+        </section>
+    </div>
+    <script>
+        document.getElementById('book-flight-btn').addEventListener('click', function() {
+            window.location.href = 'booking.html';
+        });
+    </script>
+</body>
+</html>
