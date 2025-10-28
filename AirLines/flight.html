@@ -10,47 +10,102 @@
     <header>
         <h1>Available Flights</h1>
     </header>
+
     <section class="flight-section">
+        <div id="booking-summary"></div>
         <div id="flights-container"></div>
     </section>
+
     <script>
+
+        const pages = ["Home", "Booking", "Flight", "Passenger", "Booking Summary"];
+
+
+        console.log("Pages in system:", pages.join(", "));
+
+
+
         const bookingData = JSON.parse(localStorage.getItem('bookingData'));
         const flightsContainer = document.getElementById('flights-container');
+        const bookingSummary = document.getElementById('booking-summary');
 
-        // Hardcoded flight schedules
+        bookingSummary.innerHTML = `
+            <div class="summary-card">
+                <h2>Booking Details</h2>
+                <p><strong>From:</strong> ${bookingData.from}</p>
+                <p><strong>To:</strong> ${bookingData.to}</p>
+                <p><strong>Flight Type:</strong> ${bookingData.flightType}</p>
+                <p><strong>Class:</strong> ${bookingData.flightClass}</p>
+                <p><strong>Passengers:</strong> ${bookingData.passengers}</p>
+                <p><strong>Promo Code:</strong> ${bookingData.promoCode || 'None'}</p>
+                <p><strong>Discount:</strong> ${bookingData.discount}%</p>
+                <hr>
+            </div>
+        `;
+        if (bookingData) {
+            document.getElementById('booking-summary').innerHTML += `
+                <div id="summary">
+                    <p><strong>From:</strong> ${bookingData.from}</p>
+                    <p><strong>To:</strong> ${bookingData.to}</p>
+                    <p><strong>Passengers:</strong> ${bookingData.passengers}</p>
+                    <p><strong>Class:</strong> ${bookingData.flightClass}</p>
+                    <p><strong>Promo:</strong> ${bookingData.promoCode || 'None'}</p>
+                    <p><strong>Total Fare:</strong> ₱${(bookingData.totalPrice || 0).toLocaleString()}</p>
+                </div>
+            `;
+        }
+
+        const classMultiplier = {
+            "Economy": 1.0,
+            "Business": 1.5,
+            "First Class": 2.0
+        };
+
         const roundTripFlights = {
             depart: [
-                { flightNo: '5J 560', time: '08:00', date: bookingData.departDate, destination: bookingData.to, price: 5000, seats: 50, hours: 2, fareType: 'Promo Fare', terminal: 'Terminal 1' },
-                { flightNo: '5J 561', time: '12:00', date: bookingData.departDate, destination: bookingData.to, price: 5500, seats: 45, hours: 2, fareType: '', terminal: 'Terminal 2' },
-                { flightNo: '5J 562', time: '16:00', date: bookingData.departDate, destination: bookingData.to, price: 6000, seats: 40, hours: 2, fareType: 'Promo Fare', terminal: 'Terminal 1' }
+                { flightNo: '5J 560', time: '08:00', date: bookingData.departDate, destination: bookingData.to, basePrice: 5000, seats: 50, hours: 2, fareType: 'Promo Fare', terminal: 'Terminal 1' },
+                { flightNo: '5J 561', time: '12:00', date: bookingData.departDate, destination: bookingData.to, basePrice: 5500, seats: 45, hours: 2, fareType: '', terminal: 'Terminal 2' },
+                { flightNo: '5J 562', time: '16:00', date: bookingData.departDate, destination: bookingData.to, basePrice: 6000, seats: 40, hours: 2, fareType: 'Promo Fare', terminal: 'Terminal 1' }
             ],
             return: [
-                { flightNo: '5J 563', time: '09:00', date: bookingData.returnDate, destination: bookingData.from, price: 5000, seats: 50, hours: 2, fareType: 'Promo Fare', terminal: 'Terminal 1' },
-                { flightNo: '5J 564', time: '13:00', date: bookingData.returnDate, destination: bookingData.from, price: 5500, seats: 45, hours: 2, fareType: '', terminal: 'Terminal 2' },
-                { flightNo: '5J 565', time: '17:00', date: bookingData.returnDate, destination: bookingData.from, price: 6000, seats: 40, hours: 2, fareType: 'Promo Fare', terminal: 'Terminal 1' }
+                { flightNo: '5J 563', time: '09:00', date: bookingData.returnDate, destination: bookingData.from, basePrice: 5000, seats: 50, hours: 2, fareType: 'Promo Fare', terminal: 'Terminal 1' },
+                { flightNo: '5J 564', time: '13:00', date: bookingData.returnDate, destination: bookingData.from, basePrice: 5500, seats: 45, hours: 2, fareType: '', terminal: 'Terminal 2' },
+                { flightNo: '5J 565', time: '17:00', date: bookingData.returnDate, destination: bookingData.from, basePrice: 6000, seats: 40, hours: 2, fareType: 'Promo Fare', terminal: 'Terminal 1' }
             ]
         };
 
         const oneWayFlights = [
-            { flightNo: '5J 566', time: '10:00', date: bookingData.departDate, destination: bookingData.to, price: 4500, seats: 55, hours: 2, fareType: 'Promo Fare', terminal: 'Terminal 1' },
-            { flightNo: '5J 567', time: '14:00', date: bookingData.departDate, destination: bookingData.to, price: 5000, seats: 50, hours: 2, fareType: '', terminal: 'Terminal 2' },
-            { flightNo: '5J 568', time: '18:00', date: bookingData.departDate, destination: bookingData.to, price: 5500, seats: 45, hours: 2, fareType: 'Promo Fare', terminal: 'Terminal 1' }
+            { flightNo: '5J 566', time: '10:00', date: bookingData.departDate, destination: bookingData.to, basePrice: 4500, seats: 55, hours: 2, fareType: 'Promo Fare', terminal: 'Terminal 1' },
+            { flightNo: '5J 567', time: '14:00', date: bookingData.departDate, destination: bookingData.to, basePrice: 5000, seats: 50, hours: 2, fareType: '', terminal: 'Terminal 2' },
+            { flightNo: '5J 568', time: '18:00', date: bookingData.departDate, destination: bookingData.to, basePrice: 5500, seats: 45, hours: 2, fareType: 'Promo Fare', terminal: 'Terminal 1' }
         ];
+
+        function calculateFinalPrice(basePrice) {
+            let price = basePrice * classMultiplier[bookingData.flightClass];
+            if (bookingData.discount > 0) {
+                const discountAmount = price * (bookingData.discount / 100);
+                price -= discountAmount;
+            }
+            return price;
+        }
 
         function displayFlights(flights, title) {
             let html = `<h2>${title}</h2><div class="flights-list">`;
             flights.forEach(flight => {
+                const finalPrice = calculateFinalPrice(flight.basePrice);
                 html += `
                     <div class="flight-card">
-                        <p>Flight No: ${flight.flightNo}</p>
-                        <p>Time: ${flight.time}</p>
-                        <p>Date: ${flight.date}</p>
-                        <p>Destination: ${flight.destination}</p>
-                        <p>Price: ₱${flight.price}</p>
-                        <p>Seats Available: ${flight.seats}</p>
-                        <p>Hours: ${flight.hours}</p>
-                        <p>Fare Type: ${flight.fareType || 'Standard'}</p>
-                        <button class="select-btn" data-flight='${JSON.stringify(flight)}'>Select</button>
+                        <p><strong>Flight No:</strong> ${flight.flightNo}</p>
+                        <p><strong>Time:</strong> ${flight.time}</p>
+                        <p><strong>Date:</strong> ${flight.date}</p>
+                        <p><strong>Destination:</strong> ${flight.destination}</p>
+                        <p><strong>Base Price:</strong> ₱${flight.basePrice.toLocaleString()}</p>
+                        <p><strong>Class Price:</strong> ₱${finalPrice.toLocaleString()}</p>
+                        <p><strong>Seats Available:</strong> ${flight.seats}</p>
+                        <p><strong>Hours:</strong> ${flight.hours}</p>
+                        <p><strong>Fare Type:</strong> ${flight.fareType || 'Standard'}</p>
+                        <p><strong>Terminal:</strong> ${flight.terminal}</p>
+                        <button class="select-btn" data-flight='${JSON.stringify({...flight, finalPrice})}'>Select</button>
                     </div>
                 `;
             });
@@ -59,7 +114,9 @@
         }
 
         if (bookingData.flightType === 'round-trip') {
-            flightsContainer.innerHTML = displayFlights(roundTripFlights.depart, 'Depart Flights') + displayFlights(roundTripFlights.return, 'Return Flights');
+            flightsContainer.innerHTML = 
+                displayFlights(roundTripFlights.depart, 'Depart Flights') + 
+                displayFlights(roundTripFlights.return, 'Return Flights');
         } else {
             flightsContainer.innerHTML = displayFlights(oneWayFlights, 'One Way Flights');
         }
@@ -70,6 +127,7 @@
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('select-btn')) {
                 const selectedFlight = JSON.parse(e.target.dataset.flight);
+
                 if (bookingData.flightType === 'round-trip') {
                     if (selectedFlight.date === bookingData.departDate) {
                         selectedDepart = selectedFlight;
@@ -92,3 +150,4 @@
     </script>
 </body>
 </html>
+

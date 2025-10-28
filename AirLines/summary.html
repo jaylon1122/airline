@@ -1,31 +1,37 @@
 <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="style.css">
-        <title>Booking Summary - Narvasa AirLines</title>
-    </head>
-    <body>
-        <header>
-            <h1>Booking Summary</h1>
-        </header>
-        <div class="progress-bar">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Booking Summary - Narvasa AirLines</title>
+</head>
+<body>
+    <header>
+        <h1>Booking Summary</h1>
+    </header>
+
+    <div class="progress-bar">
         <div class="progress-step completed"><span>1</span><div class="progress-label">Select Flight</div></div>
         <div class="progress-step completed"><span>2</span><div class="progress-label">Passenger Info</div></div>
         <div class="progress-step active"><span>3</span><div class="progress-label">Booking Summary</div></div>
         <div class="progress-step"><span>4</span><div class="progress-label">Confirmation</div></div>
     </div>
-        <section class="summary-section">
-            <div id="summary-container"></div>
-            <button id="book-now-btn">Book Now</button>
-        </section>
-        <script>
-            const bookingData = JSON.parse(localStorage.getItem('bookingData'));
-            const selectedFlights = JSON.parse(localStorage.getItem('selectedFlights'));
-            const passengers = JSON.parse(localStorage.getItem('passengers'));
-            const summaryContainer = document.getElementById('summary-container');
 
+    <section class="summary-section">
+        <div id="summary-container"></div>
+        <button id="book-now-btn">Book Now</button>
+    </section>
+
+    <script>
+        const bookingData = JSON.parse(localStorage.getItem('bookingData'));
+        const selectedFlights = JSON.parse(localStorage.getItem('selectedFlights')) || {};
+        const passengers = JSON.parse(localStorage.getItem('passengers')) || [];
+        const summaryContainer = document.getElementById('summary-container');
+
+        if (!bookingData) {
+            summaryContainer.innerHTML = "<p>No booking data found. Please start your booking again.</p>";
+        } else {
             let html = `<h2>Booking Details</h2>`;
             html += `<p><strong>From:</strong> ${bookingData.from}</p>`;
             html += `<p><strong>To:</strong> ${bookingData.to}</p>`;
@@ -35,47 +41,64 @@
                 html += `<p><strong>Return Date:</strong> ${bookingData.returnDate}</p>`;
             }
             html += `<p><strong>Number of Passengers:</strong> ${bookingData.passengers}</p>`;
+            html += `<p><strong>Flight Class:</strong> ${bookingData.flightClass}</p>`;
 
             html += `<h3>Flight Information</h3>`;
             if (selectedFlights.depart) {
-                html += `<div class="flight-info">
-                    <p><strong>Depart Flight:</strong></p>
-                    <p>Flight No: ${selectedFlights.depart.flightNo}</p>
-                    <p>Time: ${selectedFlights.depart.time}</p>
-                    <p>Date: ${selectedFlights.depart.date}</p>
-                    <p>Destination: ${selectedFlights.depart.destination}</p>
-                    <p>Terminal: ${selectedFlights.depart.terminal}</p>
-                    <p>Price: ₱${selectedFlights.depart.price}</p>
-                </div>`;
+                html += `
+                    <div class="flight-info">
+                        <p><strong>Depart Flight:</strong></p>
+                        <p>Flight No: ${selectedFlights.depart.flightNo}</p>
+                        <p>Time: ${selectedFlights.depart.time}</p>
+                        <p>Date: ${selectedFlights.depart.date}</p>
+                        <p>Destination: ${selectedFlights.depart.destination}</p>
+                        <p>Terminal: ${selectedFlights.depart.terminal}</p>
+                        <p>Price: ₱${selectedFlights.depart.price || bookingData.totalPrice}</p>
+                    </div>
+                `;
             }
+
             if (selectedFlights.return) {
-                html += `<div class="flight-info">
-                    <p><strong>Return Flight:</strong></p>
-                    <p>Flight No: ${selectedFlights.return.flightNo}</p>
-                    <p>Time: ${selectedFlights.return.time}</p>
-                    <p>Date: ${selectedFlights.return.date}</p>
-                    <p>Destination: ${selectedFlights.return.destination}</p>
-                    <p>Terminal: ${selectedFlights.return.terminal}</p>
-                    <p>Price: ₱${selectedFlights.return.price}</p>
-                </div>`;
+                html += `
+                    <div class="flight-info">
+                        <p><strong>Return Flight:</strong></p>
+                        <p>Flight No: ${selectedFlights.return.flightNo}</p>
+                        <p>Time: ${selectedFlights.return.time}</p>
+                        <p>Date: ${selectedFlights.return.date}</p>
+                        <p>Destination: ${selectedFlights.return.destination}</p>
+                        <p>Terminal: ${selectedFlights.return.terminal}</p>
+                        <p>Price: ₱${selectedFlights.return.price || 0}</p>
+                    </div>
+                `;
             }
 
             html += `<h3>Passenger Details</h3>`;
             passengers.forEach((passenger, index) => {
-                html += `<div class="passenger-info">
-                    <p><strong>Passenger ${index + 1}:</strong></p>
-                    <p>Name: ${passenger.name}</p>
-                    <p>Email: ${passenger.email}</p>
-                    <p>Phone: ${passenger.phone}</p>
-                </div>`;
+                html += `
+                    <div class="passenger-info">
+                        <p><strong>Passenger ${index + 1}:</strong></p>
+                        <p>Name: ${passenger.name}</p>
+                        <p>Email: ${passenger.email}</p>
+                        <p>Phone: ${passenger.phone}</p>
+                    </div>
+                `;
             });
+
+            // ✅ Add total fare and discount summary
+            html += `
+                <h3>Fare Summary</h3>
+                <p><strong>Discount Applied:</strong> ${bookingData.discount}%</p>
+                <p><strong>Total Fare:</strong> ₱${bookingData.totalPrice.toLocaleString()}</p>
+            `;
 
             summaryContainer.innerHTML = html;
+        }
 
-            document.getElementById('book-now-btn').addEventListener('click', function() {
-                alert('Booking successful! Thank you for choosing Narvasa AirLines.');
-                window.location.href = 'home.html'
-            });
-        </script>
-    </body>
-    </html>
+        document.getElementById('book-now-btn').addEventListener('click', function() {
+            alert('Booking successful! Thank you for choosing Narvasa AirLines.');
+            localStorage.clear();
+            window.location.href = 'home.html';
+        });
+    </script>
+</body>
+</html>

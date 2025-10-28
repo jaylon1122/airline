@@ -10,22 +10,26 @@
     <header>
         <h1>Booking Details</h1>
     </header>
+
     <div class="progress-bar">
         <div class="progress-step active"><span>1</span><div class="progress-label">Select Flight</div></div>
         <div class="progress-step"><span>2</span><div class="progress-label">Passenger Info</div></div>
         <div class="progress-step"><span>3</span><div class="progress-label">Booking Summary</div></div>
         <div class="progress-step"><span>4</span><div class="progress-label">Confirmation</div></div>
     </div>
+
     <section class="booking-section">
         <form id="booking-form">
             <div class="form-group">
                 <label for="from">From:</label>
                 <input type="text" id="from" name="from" required>
             </div>
+
             <div class="form-group">
                 <label for="to">To:</label>
                 <input type="text" id="to" name="to" required>
             </div>
+
             <div class="form-group">
                 <label>Flight Type:</label>
                 <input type="radio" id="round-trip" name="flight-type" value="round-trip" checked>
@@ -33,14 +37,17 @@
                 <input type="radio" id="one-way" name="flight-type" value="one-way">
                 <label for="one-way">One Way</label>
             </div>
+
             <div class="form-group" id="depart-date-group">
                 <label for="depart-date">Depart Date:</label>
                 <input type="date" id="depart-date" name="depart-date" required>
             </div>
+
             <div class="form-group" id="return-date-group">
                 <label for="return-date">Return Date:</label>
                 <input type="date" id="return-date" name="return-date" required>
             </div>
+
             <div class="form-group">
                 <label for="passengers">Number of Passengers:</label>
                 <select id="passengers" name="passengers" required>
@@ -50,9 +57,26 @@
                     <option value="4">4</option>
                 </select>
             </div>
+
+            <div class="form-group">
+                <label for="flight-class">Class:</label>
+                <select id="flight-class" name="flight-class" required>
+                    <option value="Economy">Economy</option>
+                    <option value="Business">Business</option>
+                    <option value="First Class">First Class</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="promo">Promo Code:</label>
+                <input type="text" id="promo" name="promo" placeholder="Enter promo code (optional)">
+                <small id="promo-message" style="color: green;"></small>
+            </div>
+
             <button type="submit">Search Flight</button>
         </form>
     </section>
+
     <script>
         const flightTypeRadios = document.querySelectorAll('input[name="flight-type"]');
         const returnDateGroup = document.getElementById('return-date-group');
@@ -69,18 +93,64 @@
             });
         });
 
+        const promoInput = document.getElementById('promo');
+        const promoMessage = document.getElementById('promo-message');
+        let discount = 0;
+
+        promoInput.addEventListener('input', function() {
+            const code = promoInput.value.trim().toUpperCase();
+            if (code === 'AEROSKY10') {
+                discount = 10;
+                promoMessage.textContent = '✅ Promo code applied: 10% discount!';
+                promoMessage.style.color = 'green';
+            } else if (code === 'AEROSKY50') {
+                discount = 50;
+                promoMessage.textContent = '✅ Promo code applied: 50% discount!';
+                promoMessage.style.color = 'green';
+            } else if (code === '') {
+                discount = 0;
+                promoMessage.textContent = '';
+            } else {
+                discount = 0;
+                promoMessage.textContent = '❌ Invalid promo code';
+                promoMessage.style.color = 'red';
+            }
+        });
+
         document.getElementById('booking-form').addEventListener('submit', function(e) {
             e.preventDefault();
+
             const formData = new FormData(this);
+            const passengers = parseInt(formData.get('passengers'));
+            const flightClass = formData.get('flight-class');
+
+            // 🎟 Base price per passenger based on class
+            let basePrice = 0;
+            if (flightClass === "Economy") basePrice = 3000;
+            else if (flightClass === "Business") basePrice = 7000;
+            else if (flightClass === "First Class") basePrice = 12000;
+
+            // 💰 Compute total and apply discount
+            let totalPrice = basePrice * passengers;
+            let discountAmount = totalPrice * (discount / 100);
+            let finalPrice = totalPrice - discountAmount;
+
             const bookingData = {
                 from: formData.get('from'),
                 to: formData.get('to'),
                 flightType: formData.get('flight-type'),
                 departDate: formData.get('depart-date'),
                 returnDate: formData.get('return-date'),
-                passengers: formData.get('passengers')
+                passengers: passengers,
+                flightClass: flightClass,
+                promoCode: formData.get('promo'),
+                discount: discount,
+                totalPrice: finalPrice
             };
+
             localStorage.setItem('bookingData', JSON.stringify(bookingData));
+
+            // ✅ Redirect after saving
             window.location.href = 'flight.html';
         });
     </script>
